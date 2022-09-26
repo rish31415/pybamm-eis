@@ -195,7 +195,68 @@ def thomasMethod(diag1, diag2, diag3, b):
     ans = np.linalg.solve(Bm, y)[-1]
     
     return ans
+
+def ILUpreconditioner(diag1, diag2, diag3):
+    '''
+    ILUpreconditioner(diag1, diag2, diag3)
+    
+    Creates an ILU preconditioner for A. A is block tridiagonal.
+    
+    Parameters
+    ----------
+    diag1 : list of matrices
+        The lower diagonal of A.
+    diag2 : list of matrices
+        The main diagonal of A
+    diag3 : list of matrices
+        The upper diagonal of A
+
+    Returns
+    -------
+    L : scipy sparse csr matrix
+        A lower triangular matrix 
+    U : scipy sparse csr matrix
+        An upper triangular matrix 
         
+        We have A equals approximately LU
+
+    '''
+    m = len(diag2)
+    
+    k = np.shape(diag1[0])[0]
+    Si = diag2[0]
+    Ss = [Si]
+    Ti = np.linalg.solve(Si, diag3[0])
+    Ts = [Ti]
+    
+    prev = []
+    
+    for i in range(2, m+1):
+        current = [diag2[i-1], diag1[i-2], diag2[i-2], diag3[i-3], diag3[i-2]]
+        if current == prev:
+            Ss.append(Si)
+            Ts.append(Ti)
+        else:
+            M = np.linalg.solve(current[2], current[3])
+            H = current[1]@M
+            G = np.linalg.solve(current[0], H)
+            F = np.eye(k) + 2*G
+            Si = current[0]@np.linalg.inv(F)
+            Ss.append(Si)
+            
+            if i != m:
+                Ti = np.linalg.solve(Si, current[4])
+                Ts.append(Ti)
+                prev = current
+
+    L = scipy.sparse.bmat([[Ss[i] if i == j else diag1[j] if i-j==1
+                else None for i in range(m)]
+                for j in range(m)], format='csr')
+    U = scipy.sparse.bmat([[np.eye(k) if i == j else Ts[i] if i-j==-1
+            else None for i in range(m)]
+            for j in range(m)], format='csr')
+    
+    return L, U
 '''
 A = np.array([[2+1.j, 1+3.j, 0, 0, 0], 
               [-10.j, 2, 3, 0, 5],
