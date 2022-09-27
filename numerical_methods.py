@@ -196,6 +196,48 @@ def thomasMethod(diag1, diag2, diag3, b):
     
     return ans
 
+def get_block_diagonals(M, J, k):
+    '''
+    get_block_diagonals(M, J, k)
+    
+    converts a scipy sparse csr matrix to a block diagonal storage form
+    
+    Parameters
+    ----------
+    
+    M : scipy sparse csr matrix 
+        Must be block diagonal
+    J : scipy sparse csr matrix 
+        Must be block tridiagonal
+    k : int
+        is the block size
+    
+    Returns
+    -------
+    
+    M_diag : list
+        list of all the block matrices on the diagonal of M
+        
+    (diag1, diag2, diag3) : tuple
+        a tuple of lists of block matrices on the 3
+        diagonals of J. 1 is below the main diagonal, 2 is the main diagonal, 3
+        is above.
+    '''
+    n = np.shape(M)[0]
+    m = int(n/k)
+    diag1 = []
+    diag2 = []
+    diag3 = []
+    M_diag = []
+    for i in range(m-1):
+        diag1.append(scipy.sparse.csr_matrix.todense(J[range(i*k, (i+1)*k), :][:, range((i+1)*k, (i+2)*k)]).astype('complex'))
+        diag2.append(scipy.sparse.csr_matrix.todense(J[range(i*k, (i+1)*k), :][:, range((i)*k, (i+1)*k)]).astype('complex'))
+        diag3.append(scipy.sparse.csr_matrix.todense(J[range((i+1)*k, (i+2)*k), :][:, range((i)*k, (i+1)*k)]).astype('complex'))
+        M_diag.append(scipy.sparse.csr_matrix.todense(M[range(i*k, (i+1)*k), :][:, range((i)*k, (i+1)*k)]).astype('complex'))
+    diag2.append(scipy.sparse.csr_matrix.todense(J[range((m-1)*k, m*k), :][:, range((m-1)*k, (m)*k)]).astype('complex'))
+    M_diag.append(scipy.sparse.csr_matrix.todense(M[range((m-1)*k, m*k), :][:, range((m-1)*k, (m)*k)]).astype('complex'))
+    return M_diag, (diag1, diag2, diag3)
+
 def ILUpreconditioner(diag1, diag2, diag3):
     '''
     ILUpreconditioner(diag1, diag2, diag3)
@@ -250,11 +292,11 @@ def ILUpreconditioner(diag1, diag2, diag3):
                 prev = current
 
     L = scipy.sparse.bmat([[Ss[i] if i == j else diag1[j] if i-j==1
-                else None for i in range(m)]
-                for j in range(m)], format='csr')
+                else None for j in range(m)]
+                for i in range(m)], format='csr')
     U = scipy.sparse.bmat([[np.eye(k) if i == j else Ts[i] if i-j==-1
-            else None for i in range(m)]
-            for j in range(m)], format='csr')
+            else None for j in range(m)]
+            for i in range(m)], format='csr')
     
     return L, U
 '''
@@ -312,7 +354,7 @@ c = tdge(diag1, diag2, diag3, [0, 0, 0, 0, 0, 3])
 print(c)
 '''
 
-
+'''
 #Thomas solve Test
 diag1 = []
 diag2 = []
@@ -333,8 +375,23 @@ print("thomas method answer:" + str(ans))
 M = np.array([[2, 4, 0, 0], [2, 9, 0, 0], [1, 2, 2, 4], [3, 4, 2, 9]])
 ans = np.linalg.solve(M, b)
 print("Numpy solve answer: " + str(ans))
+'''
+'''
+#preconditioner test
+A, b = get_matrix_problem(5, 1)
+print(np.shape(A))
+M_diags, J_diags = get_block_diagonals(csr_matrix(np.zeros([4, 4])), csr_matrix(A), 1)
+L, U = ILUpreconditioner(J_diags[0], J_diags[1], J_diags[2])
+print(J_diags)
+print(L.todense())
+print(U.todense())
 
+print(A)
+M = L@U
+print(M.todense())
+print(np.shape(M))
 #CG required positive definite symmetric matrices 
 #Make matrix symmetric?
 #BiCG
 #BiCGSTAB?
+'''
