@@ -10,16 +10,16 @@ import time as timer
 from scipy.fft import fft
 
 # Set up
-model = pybamm.lithium_ion.SPM(options={"surface form": "differential"}, name="SPM")
+model = pybamm.lithium_ion.SPMe(options={"surface form": "differential"})
 
-parameter_values = pybamm.ParameterValues("Marquis2019")
+parameter_values = pybamm.ParameterValues("Chen2020")
 
 frequencies = np.logspace(-4, 2, 30)
 
 # Time domain
 I = 50 * 1e-3
 number_of_periods = 20
-samples_per_period = 8
+samples_per_period = 16
 plot = False  # whether to plot results inside the loop
 
 
