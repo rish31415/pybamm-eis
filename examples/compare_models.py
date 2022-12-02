@@ -1,3 +1,7 @@
+#
+# Compare impedance of different models
+#
+
 import pbeis
 import pybamm
 import matplotlib.pyplot as plt

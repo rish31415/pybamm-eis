@@ -1,3 +1,7 @@
+#
+# Compare EIS methods
+#
+
 import pbeis
 import pybamm
 import numpy as np
@@ -15,7 +19,7 @@ frequencies = np.logspace(-4, 2, 30)
 # Time domain
 I = 50 * 1e-3
 number_of_periods = 20
-samples_per_period = 16
+samples_per_period = 8
 plot = False  # whether to plot results inside the loop
 
 

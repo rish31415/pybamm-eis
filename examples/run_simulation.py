@@ -1,3 +1,7 @@
+#
+# Run a simple EIS simulation
+#
+
 import pbeis
 import pybamm
 
