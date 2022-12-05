@@ -45,10 +45,17 @@ def graphite_electrolyte_exchange_current_density_Teo2021(c_e, c_s_surf, c_s_max
     :class:`pybamm.Symbol`
         Exchange-current density [A.m-2]
     """
-    k_ref = 5.031e-11  # (mol/s/m2)(m3/mol)**1.5
-    F = pybamm.constants.F
-    m_ref = k_ref * F  # (A/m2)(m3/mol)**1.5
-    return m_ref * c_e**0.5 * c_s_surf**0.5 * (c_s_max - c_s_surf) ** 0.5
+    i_ref = 3.30  # (A/m2)
+    alpha = 0.5
+
+    c_e_ref = pybamm.Parameter("Typical electrolyte concentration [mol.m-3]")
+
+    return (
+        i_ref
+        * (c_e / c_e_ref) ** (1 - alpha)
+        * (c_s_surf / c_s_max) ** alpha
+        * (1 - c_s_surf / c_s_max) ** (1 - alpha)
+    )
 
 
 def lco_ocp_Teo2021(sto):
@@ -101,10 +108,17 @@ def lco_electrolyte_exchange_current_density_Teo2021(c_e, c_s_surf, c_s_max, T):
     :class:`pybamm.Symbol`
         Exchange-current density [A.m-2]
     """
-    k_ref = 2.334e-11  # (mol/s/m2)(m3/mol)**1.5
-    F = pybamm.constants.F
-    m_ref = k_ref * F  # (A/m2)(m3/mol)**1.5
-    return m_ref * c_e**0.5 * c_s_surf**0.5 * (c_s_max - c_s_surf) ** 0.5
+    i_ref = 3.57  # (A/m2)
+    alpha = 0.5
+
+    c_e_ref = pybamm.Parameter("Typical electrolyte concentration [mol.m-3]")
+
+    return (
+        i_ref
+        * (c_e / c_e_ref) ** (1 - alpha)
+        * (c_s_surf / c_s_max) ** alpha
+        * (1 - c_s_surf / c_s_max) ** (1 - alpha)
+    )
 
 
 def electrolyte_conductivity_Teo2021(c_e, T):
@@ -199,10 +213,11 @@ def get_parameter_values():
         # electrolyte
         "Typical electrolyte concentration [mol.m-3]": 1000.0,
         "Initial concentration in electrolyte [mol.m-3]": 1000.0,
-        "Cation transference number": 0.363,
+        "Cation transference number": 0.364,
         "1 + dlnf/dlnc": 1.0,
         "Electrolyte diffusivity [m2.s-1]": 7.5e-10,
-        "Electrolyte conductivity [S.m-1]": electrolyte_conductivity_Teo2021,
+        # "Electrolyte conductivity [S.m-1]": electrolyte_conductivity_Teo2021,
+        "Electrolyte conductivity [S.m-1]": 0.204737,
         # experiment
         "Reference temperature [K]": 298.15,
         "Ambient temperature [K]": 298.15,
