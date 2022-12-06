@@ -18,12 +18,15 @@ def brute_force(model, parameter_values, frequencies):
 
     parameter_values["Current function [A]"] = current_function
 
+    start_time = timer.time()
     sim = pybamm.Simulation(
         model,
         parameter_values=parameter_values,
         solver=pybamm.CasadiSolver(mode="safe without grid"),
     )
     sim.build()
+    end_time = timer.time()
+    build_time = end_time - start_time
 
     start_time = timer.time()
     impedances_time = []
@@ -44,12 +47,12 @@ def brute_force(model, parameter_values, frequencies):
         impedance = -voltage_fft[idx] / current_fft[idx]
         impedances_time.append(impedance)
     end_time = timer.time()
-    time_elapsed = end_time - start_time
+    solve_time = end_time - start_time
 
     return {
         "States": sol.first_state.y.shape[0],
-        "Setup time": sol.set_up_time.value,
-        "Solve time": time_elapsed,
+        "Setup time": build_time + sol.set_up_time.value,
+        "Solve time": solve_time,
     }
 
 
@@ -71,23 +74,24 @@ parameter_values = pybamm.get_size_distribution_parameters(
 frequencies = np.logspace(-4, 2, 30)
 methods = ["direct", "prebicgstab"]
 models = [
-    pybamm.lithium_ion.SPM(options={"surface form": "differential"}, name="SPM"),
-    pybamm.lithium_ion.SPMe(options={"surface form": "differential"}, name="SPMe"),
-    pybamm.lithium_ion.DFN(options={"surface form": "differential"}, name="DFN"),
-    pybamm.lithium_ion.MPM(name="MPM"),
+    # pybamm.lithium_ion.SPM(options={"surface form": "differential"}, name="SPM"),
+    # pybamm.lithium_ion.SPMe(options={"surface form": "differential"}, name="SPMe"),
+    # pybamm.lithium_ion.DFN(options={"surface form": "differential"}, name="DFN"),
+    # pybamm.lithium_ion.MPM(name="MPM"),
+    pybamm.lithium_ion.SPM(
+        {
+            "surface form": "differential",
+            "current collector": "potential pair",
+            "dimensionality": 2,
+        },
+        name="SPM Pouch",
+    ),
 ]
-results = dict.fromkeys(
-    [model.name for model in models], dict.fromkeys(["brute force"] + methods)
-)
-
 for model in models:
-    results[model.name]["brute force"] = brute_force(
-        model, parameter_values, frequencies
-    )
+    results = dict.fromkeys(dict.fromkeys(["brute force"] + methods))
+    results["brute force"] = brute_force(model, parameter_values, frequencies)
     for method in methods:
-        results[model.name][method] = frequency_domain(
-            model, parameter_values, frequencies, method
-        )
-
-pp = pprint.PrettyPrinter(depth=5)
-pp.pprint(results)
+        results[method] = frequency_domain(model, parameter_values, frequencies, method)
+    print(model.name)
+    pp = pprint.PrettyPrinter(depth=5)
+    pp.pprint(results)

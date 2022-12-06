@@ -1,6 +1,8 @@
 import pbeis
 import pybamm
 
+pybamm.set_logging_level("INFO")
+
 # Load model (DFN with capacitance)
 model = pybamm.lithium_ion.DFN(options={"surface form": "differential"})
 

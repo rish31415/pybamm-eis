@@ -46,6 +46,8 @@ class EISSimulation:
         # Set up the model for EIS
         pybamm.logger.info(f"Start setting up {self.model_name} for EIS")
         self.model = self.set_up_model_for_eis(model)
+        self.set_up_time = timer.time()
+        pybamm.logger.info(f"Finished setting up {self.model_name} for EIS")
 
         # Create and build a simulation to conviniently build the model
         parameter_values = parameter_values or model.default_parameter_values

@@ -5,12 +5,23 @@ import matplotlib.pyplot as plt
 import time as timer
 from scipy.fft import fft
 
+
+plt.rcParams.update(
+    {
+        "font.size": 10,
+        "axes.labelsize": 10,
+        "lines.linewidth": 2.0,
+        "lines.markersize": 3.6,
+    }
+)
+
+
 # Set up
-model = pybamm.lithium_ion.SPM(options={"surface form": "differential"}, name="SPM")
+model = pybamm.lithium_ion.SPM(options={"surface form": "differential"}, name="DFN")
 
 parameter_values = pybamm.ParameterValues("Marquis2019")
 
-frequencies = np.logspace(-4, 2, 30)
+frequencies = pbeis.logspace(-4, 4, 30)
 
 # Time domain
 I = 50 * 1e-3
@@ -28,7 +39,9 @@ parameter_values["Current function [A]"] = current_function
 start_time = timer.time()
 
 sim = pybamm.Simulation(
-    model, parameter_values=parameter_values, solver=pybamm.ScipySolver()
+    model,
+    parameter_values=parameter_values,
+    solver=pybamm.CasadiSolver(mode="safe without grid"),
 )
 
 impedances_time = []
@@ -66,7 +79,7 @@ time_elapsed = end_time - start_time
 print("Time domain method: ", time_elapsed, "s")
 
 # Frequency domain
-methods = ["direct", "prebicgstab"]
+methods = ["direct"]  # , "prebicgstab"]
 impedances_freqs = []
 for method in methods:
     start_time = timer.time()
@@ -78,13 +91,45 @@ for method in methods:
     impedances_freqs.append(impedances_freq)
 
 # Compare
-_, ax = plt.subplots()
-ax = pbeis.nyquist_plot(impedances_time, ax=ax, label="Time", alpha=0.7)
+_, ax = plt.subplots(nrows=1, ncols=2, figsize=(7, 4))
+ax[0] = pbeis.nyquist_plot(
+    impedances_time, linestyle="-", ax=ax[0], label="Time", alpha=0.7
+)
 for i, method in enumerate(methods):
-    ax = pbeis.nyquist_plot(
-        impedances_freqs[i], ax=ax, label=f"Frequency ({method})", alpha=0.7
+    ax[0] = pbeis.nyquist_plot(
+        impedances_freqs[i],
+        linestyle="-",
+        ax=ax[0],
+        label=f"Frequency ({method})",
+        alpha=0.7,
     )
-ax.legend()
-plt.suptitle(f"{model.name}")
+    diffs = [
+        (
+            2
+            * np.sqrt((zt.real - zf.real) ** 2 + (zt.imag - zf.imag) ** 2)
+            / (
+                np.sqrt(zt.real**2 + zt.imag**2)
+                + np.sqrt(zf.real**2 + zf.imag**2)
+            )
+        )
+        * 100
+        for zt, zf in zip(impedances_time, impedances_freqs[i])
+    ]
+
+    ax[1].plot(
+        frequencies,
+        diffs,
+        linestyle="-",
+        marker="o",
+        label=f"Frequency ({method})",
+        alpha=0.7,
+    )
+
+ax[1].set_xlabel(r"$\omega$ [Hz]")
+ax[1].set_ylabel(r"diff [%]")
+ax[1].set_xscale("log")
+ax[0].legend()
+ax[1].legend()
+plt.tight_layout()
 plt.savefig(f"figures/{model.name}_time_vs_freq.pdf", dpi=300)
 plt.show()
