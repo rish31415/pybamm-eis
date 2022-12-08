@@ -1,6 +1,7 @@
 import pbeis
 import pybamm
 import matplotlib.pyplot as plt
+from models.mpm import MPM
 
 plt.rcParams.update(
     {
@@ -11,10 +12,11 @@ plt.rcParams.update(
     }
 )
 
+
 # Load models and parameters
 models = [
     pybamm.lithium_ion.SPM(options={"surface form": "differential"}, name="SPM"),
-    pybamm.lithium_ion.MPM(options={"surface form": "algebraic"}, name="MPM"),
+    MPM(options={"surface form": "differential"}, name="MPM"),
     pybamm.lithium_ion.DFN(options={"surface form": "differential"}, name="DFN"),
     pybamm.lithium_ion.SPM(
         {
