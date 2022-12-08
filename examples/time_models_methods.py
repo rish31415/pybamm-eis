@@ -4,6 +4,7 @@ import numpy as np
 import time as timer
 import pprint
 from scipy.fft import fft
+from models.mpm import MPM
 
 
 def brute_force(model, parameter_values, frequencies):
@@ -74,10 +75,9 @@ parameter_values = pybamm.get_size_distribution_parameters(
 frequencies = np.logspace(-4, 2, 30)
 methods = ["direct", "prebicgstab"]
 models = [
-    # pybamm.lithium_ion.SPM(options={"surface form": "differential"}, name="SPM"),
-    # pybamm.lithium_ion.SPMe(options={"surface form": "differential"}, name="SPMe"),
-    # pybamm.lithium_ion.DFN(options={"surface form": "differential"}, name="DFN"),
-    # pybamm.lithium_ion.MPM(name="MPM"),
+    pybamm.lithium_ion.SPM(options={"surface form": "differential"}, name="SPM"),
+    pybamm.lithium_ion.DFN(options={"surface form": "differential"}, name="DFN"),
+    MPM(options={"surface form": "differential"}, name="MPM"),
     pybamm.lithium_ion.SPM(
         {
             "surface form": "differential",

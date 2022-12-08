@@ -16,8 +16,13 @@ plt.rcParams.update(
 # Load models and parameters
 models = [
     pybamm.lithium_ion.SPM(options={"surface form": "differential"}, name="SPM"),
+    pybamm.lithium_ion.SPMe(options={"surface form": "differential"}, name="SPMe"),
     MPM(options={"surface form": "differential"}, name="MPM"),
     pybamm.lithium_ion.DFN(options={"surface form": "differential"}, name="DFN"),
+    pybamm.lithium_ion.DFN(
+        options={"particle size": "distribution", "surface form": "differential"},
+        name="MPDFN",
+    ),
     pybamm.lithium_ion.SPM(
         {
             "surface form": "differential",

@@ -17,7 +17,7 @@ plt.rcParams.update(
 
 
 # Set up
-model = pybamm.lithium_ion.SPM(options={"surface form": "differential"}, name="DFN")
+model = pybamm.lithium_ion.DFN(options={"surface form": "differential"}, name="DFN")
 
 parameter_values = pybamm.ParameterValues("Marquis2019")
 
