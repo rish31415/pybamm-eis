@@ -8,7 +8,6 @@ from models.mpm import MPM
 
 
 def brute_force(model, parameter_values, frequencies):
-
     # Time domain
     I = 50 * 1e-3
     number_of_periods = 20
@@ -77,21 +76,42 @@ methods = ["direct", "prebicgstab"]
 models = [
     pybamm.lithium_ion.SPM(options={"surface form": "differential"}, name="SPM"),
     pybamm.lithium_ion.DFN(options={"surface form": "differential"}, name="DFN"),
-    MPM(options={"surface form": "differential"}, name="MPM"),
-    pybamm.lithium_ion.SPM(
-        {
-            "surface form": "differential",
-            "current collector": "potential pair",
-            "dimensionality": 2,
-        },
-        name="SPM Pouch",
-    ),
+    # MPM(options={"surface form": "differential"}, name="MPM"),
+    # pybamm.lithium_ion.SPM(
+    #    options={
+    #        "surface form": "differential",
+    #        "current collector": "potential pair",
+    #        "dimensionality": 2,
+    #    },
+    #    name="SPM (pouch)",
+    # ),
+    # pybamm.lithium_ion.DFN(
+    #    options={
+    #        "surface form": "differential",
+    #        "current collector": "potential pair",
+    #        "dimensionality": 2,
+    #    },
+    #    name="DFN (pouch)",
+    # ),
+    # MPM(
+    #    options={
+    #        "surface form": "differential",
+    #        "current collector": "potential pair",
+    #        "dimensionality": 2,
+    #    },
+    #    name="MPM (pouch)",
+    # ),
 ]
 for model in models:
     results = dict.fromkeys(dict.fromkeys(["brute force"] + methods))
+    print(f"Solving {model.name} using brute force method")
     results["brute force"] = brute_force(model, parameter_values, frequencies)
     for method in methods:
+        print(f"Solving {model.name} using {method}")
         results[method] = frequency_domain(model, parameter_values, frequencies, method)
-    print(model.name)
     pp = pprint.PrettyPrinter(depth=5)
     pp.pprint(results)
+    filename = model.name.replace("(", "").replace(")", "").replace(" ", "_") + ".txt"
+    with open(filename, "w") as log_file:
+        pprint.pprint(model.name, log_file)
+        pprint.pprint(results, log_file)

@@ -64,7 +64,6 @@ for i, model in enumerate(models):
         linestyle="-",
         marker="d",
         label=f"{model.name}",
-        alpha=0.7,
     )
 ax.legend()
 plt.tight_layout()

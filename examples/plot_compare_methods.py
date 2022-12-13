@@ -123,7 +123,7 @@ for i, name in enumerate(names):
     )
 
 ax[1].set_xlabel(r"$\omega$ [Hz]")
-ax[1].set_ylabel("Difference [%]")
+ax[1].set_ylabel(r"$D(\omega)$ [\%]")
 ax[1].set_xscale("log")
 ax[0].legend()
 plt.tight_layout()

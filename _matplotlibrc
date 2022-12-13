@@ -1,6 +1,7 @@
-# Font
-text.usetex: False 
-mathtext.fontset: stixsans
+# Use LaTeX fonts
+font.family: serif
+font.serif: ComputerModern
+text.usetex: true
 
 # Backend options (42: use TrueType fonts)
 pdf.fonttype: 42
