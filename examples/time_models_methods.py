@@ -72,7 +72,7 @@ parameter_values = pybamm.ParameterValues("Marquis2019")
 parameter_values = pybamm.get_size_distribution_parameters(
     parameter_values, sd_n=0.2, sd_p=0.4
 )
-frequencies = np.logspace(-4, 2, 30)
+frequencies = np.logspace(-4, 4, 30)
 methods = ["direct", "prebicgstab"]
 models = [
     pybamm.lithium_ion.SPM(options={"surface form": "differential"}, name="SPM"),

@@ -348,6 +348,7 @@ class EISSimulation:
             iters.append(num_iters)
 
             w = w * multiplier
+
         return solution, ws
 
     def nyquist_plot(self, ax=None, marker="o", linestyle="None", **kwargs):
@@ -368,5 +369,5 @@ class EISSimulation:
             Keyword arguments, passed to plt.scatter.
         """
         return pbeis.nyquist_plot(
-            self.solution, ax=None, marker="o", linestyle="None", **kwargs
+            self.solution, ax=None, marker=marker, linestyle=linestyle, **kwargs
         )

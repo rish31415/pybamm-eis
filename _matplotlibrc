@@ -1,0 +1,24 @@
+# Font
+text.usetex: False 
+mathtext.fontset: stixsans
+
+# Backend options (42: use TrueType fonts)
+pdf.fonttype: 42
+ps.fonttype: 42
+
+# Set font sizes
+font.size: 10
+axes.labelsize: 12
+axes.titlesize: 12
+xtick.labelsize: 10
+ytick.labelsize: 10
+legend.fontsize: 10
+
+# Set lines and ticks
+lines.linewidth: 1.8
+lines.markersize: 6.0
+
+# Set legend properties
+legend.markerscale: 0.8
+legend.framealpha: 1.0
+legend.handlelength: 2.25
