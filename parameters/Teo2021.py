@@ -108,7 +108,7 @@ def lco_electrolyte_exchange_current_density_Teo2021(c_e, c_s_surf, c_s_max, T):
     :class:`pybamm.Symbol`
         Exchange-current density [A.m-2]
     """
-    i_ref = 3.57  # (A/m2)
+    i_ref = 3.67  # (A/m2)
     alpha = 0.5
 
     c_e_ref = pybamm.Parameter("Typical electrolyte concentration [mol.m-3]")
@@ -170,7 +170,7 @@ def get_parameter_values():
         "Typical current [A]": 29.0,
         "Current function [A]": 29.0,
         # negative electrode
-        "Negative electrode conductivity [S.m-1]": 48.24,  # 100 * (1-0.485-0.0326)
+        "Negative electrode conductivity [S.m-1]": 100,
         "Maximum concentration in negative electrode [mol.m-3]": 30555,
         "Negative electrode diffusivity [m2.s-1]": 3.9e-14,
         "Negative electrode OCP [V]": graphite_ocp_Teo2021,
@@ -178,7 +178,7 @@ def get_parameter_values():
         "Negative electrode active material volume fraction": 0.4824,  # 1-0.485-0.0326
         "Negative particle radius [m]": 2e-06,
         "Negative electrode Bruggeman coefficient (electrolyte)": 4,
-        "Negative electrode Bruggeman coefficient (electrode)": 0,
+        "Negative electrode Bruggeman coefficient (electrode)": 1,
         "Negative electrode cation signed stoichiometry": -1.0,
         "Negative electrode electrons in reaction": 1.0,
         "Negative electrode charge transfer coefficient": 0.5,
@@ -189,7 +189,7 @@ def get_parameter_values():
         "Negative electrode lithiation at 100% SOC": 0.85512,
         "Negative electrode lithiation at 0% SOC": 0.00819,
         # positive electrode
-        "Positive electrode conductivity [S.m-1]": 59,  # 100 * (1-0.385-0.025)
+        "Positive electrode conductivity [S.m-1]": 100,
         "Maximum concentration in positive electrode [mol.m-3]": 51554,
         "Positive electrode diffusivity [m2.s-1]": 1e-14,
         "Positive electrode OCP [V]": lco_ocp_Teo2021,
@@ -197,7 +197,7 @@ def get_parameter_values():
         "Positive electrode active material volume fraction": 0.59,  # 1-0.385-0.025
         "Positive particle radius [m]": 2e-06,
         "Positive electrode Bruggeman coefficient (electrolyte)": 4,
-        "Positive electrode Bruggeman coefficient (electrode)": 0,
+        "Positive electrode Bruggeman coefficient (electrode)": 1,
         "Positive electrode cation signed stoichiometry": -1.0,
         "Positive electrode electrons in reaction": 1.0,
         "Positive electrode charge transfer coefficient": 0.5,

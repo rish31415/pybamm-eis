@@ -42,11 +42,14 @@ set_initial_concentrations(1)
 
 
 # Choose frequencies and calculate impedance
-frequencies = pbeis.logspace(-3, 4, 60)
+frequencies = pbeis.logspace(-3, 4, 30)
 
 # Loop over parameters
-params = [parameter_values, pybamm.ParameterValues("Chen2020")]
-labels = ["Teo2021", "Chen2020"]
+labels = ["Chen2020", "Marquis2019"]
+params = [pybamm.ParameterValues(label) for label in labels]
+labels.append("Teo2021")
+params.append(parameter_values)
+
 _, ax = plt.subplots()
 
 for param, label in zip(params, labels):
