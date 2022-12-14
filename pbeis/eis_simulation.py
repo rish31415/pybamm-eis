@@ -317,10 +317,16 @@ class EISSimulation:
                 # First step, use the maximum step size and previous solution
                 step_size = max_step_size
                 start_point = sol
+                # Store this step size for the next iteration
+                old_step_size = step_size
             else:
                 # Choose step size in frequency and starting solution for the next
                 # iteration based on previous solutions and step sizes
 
+                #Find Kappa based on previous step
+                V_old = start_point[-2][0]
+                kappa = max(np.abs(V - V_old) / (step_size**2 + step_size*old_step_size), 1e-8)
+                
                 # Store previous step size
                 old_step_size = step_size
 
@@ -330,24 +336,22 @@ class EISSimulation:
 
                 # Minimize y = sqrt(e/kappa)/n over each iteration
                 # with e = kappa * (step_size**2 + step_size*old_step_size)
-                V_old = start_point[-2][0]
-                kappa = max(np.abs(V - V_old) / step_size**2, 1e-8)
                 ns.reverse()  # count down iterations, not up
                 ys = []
                 for i, e in enumerate(es):
-                    y = (
+                    y = (2 * ns[i] /
                         (
                             -step_size
-                            + np.sqrt((step_size) ** 2 + 4 * (e + 0.01) / kappa)
+                            + np.sqrt((step_size) ** 2 + 4 * (e + 1e-3) / kappa)
                         )
-                        / 2
-                        / ns[i]
                     )
                     ys.append(y)
 
-                # Step size is min{ys, max_step_size}
-                step_size = min(min(ys), max_step_size)
-
+                # Step size is min{nmin/ymin, max_step_size}
+                ymin = min(ys)
+                nmin = ns[ys.index(ymin)]
+                step_size = min(nmin/ymin, max_step_size)
+                
                 # Set starting solution based on calculated step size
                 old_sol = sol
                 start_point = sol + step_size / old_step_size * (sol - old_sol)
