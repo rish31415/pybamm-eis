@@ -1,0 +1,8 @@
+'SPM (pouch)'
+{'brute force': None,
+ 'direct': {'Setup time': 0.5792367929989268,
+            'Solve time': 0.14985158700073953,
+            'States': 4402},
+ 'prebicgstab': {'Setup time': 0.55557145199964,
+                 'Solve time': 0.20505016300012358,
+                 'States': 4402}}

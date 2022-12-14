@@ -1,0 +1,8 @@
+'DFN (pouch)'
+{'brute force': None,
+ 'direct': {'Setup time': 8.94326048199946,
+            'Solve time': 1.4551645610008563,
+            'States': 45202},
+ 'prebicgstab': {'Setup time': 9.298543421999057,
+                 'Solve time': 6.444090019000214,
+                 'States': 45202}}

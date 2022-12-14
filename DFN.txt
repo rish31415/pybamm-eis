@@ -1,0 +1,10 @@
+'DFN'
+{'brute force': {'Setup time': 0.5060837499069635,
+                 'Solve time': 76.27375292778015,
+                 'States': 900},
+ 'direct': {'Setup time': 0.654692644000022,
+            'Solve time': 0.023232785000004696,
+            'States': 902},
+ 'prebicgstab': {'Setup time': 0.7606448729999897,
+                 'Solve time': 0.05289465300000984,
+                 'States': 902}}

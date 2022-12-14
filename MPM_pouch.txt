@@ -1,0 +1,8 @@
+'MPM (pouch)'
+{'brute force': None,
+ 'direct': {'Setup time': 13.109782677000112,
+            'Solve time': 3.113405899999634,
+            'States': 120402},
+ 'prebicgstab': {'Setup time': 12.759530999999697,
+                 'Solve time': 14.501500029999079,
+                 'States': 120402}}

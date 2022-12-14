@@ -1,0 +1,10 @@
+'MPM'
+{'brute force': {'Setup time': 0.5305798949796099,
+                 'Solve time': 143.82597851753235,
+                 'States': 1202},
+ 'direct': {'Setup time': 0.6546813090000114,
+            'Solve time': 0.022534690999975737,
+            'States': 1204},
+ 'prebicgstab': {'Setup time': 0.6555272130000276,
+                 'Solve time': 0.05342211099997485,
+                 'States': 1204}}

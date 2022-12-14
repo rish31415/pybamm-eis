@@ -1,0 +1,10 @@
+'SPM'
+{'brute force': {'Setup time': 0.2526414849733669,
+                 'Solve time': 6.433117628097534,
+                 'States': 42},
+ 'direct': {'Setup time': 0.37336159199998065,
+            'Solve time': 0.015791110999998637,
+            'States': 44},
+ 'prebicgstab': {'Setup time': 0.26468855800001734,
+                 'Solve time': 0.02869221399998878,
+                 'States': 44}}
