@@ -1,10 +1,10 @@
 'MPM'
-{'brute force': {'Setup time': 0.5305798949796099,
-                 'Solve time': 143.82597851753235,
+{'brute force': {'Setup time': 0.6825571836925519,
+                 'Solve time': 39.73785161972046,
                  'States': 1202},
- 'direct': {'Setup time': 0.6546813090000114,
-            'Solve time': 0.022534690999975737,
+ 'direct': {'Setup time': 0.692562539001301,
+            'Solve time': 0.025600963999750093,
             'States': 1204},
- 'prebicgstab': {'Setup time': 0.6555272130000276,
-                 'Solve time': 0.05342211099997485,
+ 'prebicgstab': {'Setup time': 0.8998457369998505,
+                 'Solve time': 0.054093295000711805,
                  'States': 1204}}

@@ -1,10 +1,10 @@
 'DFN'
-{'brute force': {'Setup time': 0.5060837499069635,
-                 'Solve time': 76.27375292778015,
+{'brute force': {'Setup time': 0.5773360084331216,
+                 'Solve time': 22.65292763710022,
                  'States': 900},
- 'direct': {'Setup time': 0.654692644000022,
-            'Solve time': 0.023232785000004696,
+ 'direct': {'Setup time': 1.143682373000047,
+            'Solve time': 0.026968637999743805,
             'States': 902},
- 'prebicgstab': {'Setup time': 0.7606448729999897,
-                 'Solve time': 0.05289465300000984,
+ 'prebicgstab': {'Setup time': 0.7445257239996863,
+                 'Solve time': 0.06112458000097831,
                  'States': 902}}

@@ -4,7 +4,6 @@ import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 import time as timer
-from matplotlib.pyplot import cm
 from scipy.fft import fft
 
 # Set plot style ----------------------------------------------------------------------
@@ -33,7 +32,8 @@ start_time = timer.time()
 sim = pybamm.Simulation(
     model,
     parameter_values=parameter_values,
-    solver=pybamm.CasadiSolver(mode="safe without grid"),
+    # solver=pybamm.CasadiSolver(mode="safe without grid"),
+    solver=pybamm.IDAKLUSolver(),
 )
 
 # Loop over frequencies and solve
@@ -44,6 +44,8 @@ for frequency in frequencies:
     dt = period / samples_per_period
     t_eval = np.array(range(0, 1 + samples_per_period * number_of_periods)) * dt
     sol = sim.solve(t_eval, inputs={"Frequency [Hz]": frequency})
+    print(sol.integration_time)
+    print(sol.solve_time)
     # Extract final two periods of the solution
     time = sol["Time [s]"].entries[-3 * samples_per_period - 1 :]
     current = sol["Current [A]"].entries[-3 * samples_per_period - 1 :]
@@ -61,71 +63,59 @@ time_elapsed = end_time - start_time
 print("Time domain method: ", time_elapsed, "s")
 
 # Frequency domain ---------------------------------------------------------------------
-methods = ["direct", "prebicgstab"]
-names = ["Gaussian elimination", "preBicgSTAB"]
-impedances_freqs = []
-for method in methods:
-    start_time = timer.time()
-    eis_sim = pbeis.EISSimulation(model, parameter_values=parameter_values)
-    impedances_freq = eis_sim.solve(frequencies, method)
-    end_time = timer.time()
-    time_elapsed = end_time - start_time
-    print(f"Frequency domain ({method}): ", time_elapsed, "s")
-    impedances_freqs.append(impedances_freq)
+start_time = timer.time()
+eis_sim = pbeis.EISSimulation(model, parameter_values=parameter_values)
+impedances_freq = eis_sim.solve(frequencies)
+end_time = timer.time()
+time_elapsed = end_time - start_time
+print("Frequency domain: ", time_elapsed, "s")
 
 # Comparison plots ---------------------------------------------------------------------
 fig, ax = plt.subplots(1, 2, figsize=(6.4, 3))
-colors = cm.tab10(np.linspace(0, 1, 10))
-markers = ["o", "d", "s"]
 
 # plot brute force approach
 ax[0] = pbeis.nyquist_plot(
     impedances_time,
     ax=ax[0],
-    label="Brute force",
+    label="Brute-force",
     linestyle="-",
-    marker=markers[0],
-    color=colors[0],
+    marker="o",
 )
 
 # plot frequency domain approach
-for i, name in enumerate(names):
-    # nyquist
-    ax[0] = pbeis.nyquist_plot(
-        impedances_freqs[i],
-        ax=ax[0],
-        label=f"Frequency domain \n ({name})",
-        linestyle="--",
-        marker=markers[i + 1],
-        color=colors[i + 1],
-    )
-    # calculate difference w.r.t. brute force method
-    diffs = [
-        (
-            2
-            * np.sqrt((zt.real - zf.real) ** 2 + (zt.imag - zf.imag) ** 2)
-            / (
-                np.sqrt(zt.real**2 + zt.imag**2)
-                + np.sqrt(zf.real**2 + zf.imag**2)
-            )
-        )
-        * 100
-        for zt, zf in zip(impedances_time, impedances_freqs[i])
-    ]
-    # plot difference
-    ax[1].plot(
-        frequencies[: len(diffs)],
-        diffs,
-        label=f"Frequency domain \n ({name})",
-        linestyle="--",
-        marker=markers[i + 1],
-        color=colors[i + 1],
-    )
+ax[0] = pbeis.nyquist_plot(
+    impedances_freq,
+    ax=ax[0],
+    label="Frequency domain",
+    linestyle="--",
+    marker="d",
+    alpha=0.7,
+)
 
+# calculate difference w.r.t. brute force method
+diff = [
+    (
+        2
+        * np.sqrt((zt.real - zf.real) ** 2 + (zt.imag - zf.imag) ** 2)
+        / (np.sqrt(zt.real**2 + zt.imag**2) + np.sqrt(zf.real**2 + zf.imag**2))
+    )
+    * 100
+    for zt, zf in zip(impedances_time, impedances_freq)
+]
+# plot difference
+ax[1].plot(
+    frequencies,
+    diff,
+    "k-",
+    marker="s",
+)
+
+ax[0].text(-0.2, 0.95, "(a)", transform=ax[0].transAxes)
+ax[1].text(-0.2, 0.95, "(b)", transform=ax[1].transAxes)
+ax[0].legend()
 ax[1].set_xlabel(r"$\omega$ [Hz]")
 ax[1].set_ylabel(r"$D(\omega)$ [\%]")
 ax[1].set_xscale("log")
-ax[0].legend()
 plt.tight_layout()
 plt.savefig(f"figures/{model.name}_time_vs_freq.pdf", dpi=300)
 plt.show()

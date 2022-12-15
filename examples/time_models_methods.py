@@ -22,7 +22,8 @@ def brute_force(model, parameter_values, frequencies):
     sim = pybamm.Simulation(
         model,
         parameter_values=parameter_values,
-        solver=pybamm.CasadiSolver(mode="safe without grid"),
+        # solver=pybamm.CasadiSolver(mode="safe without grid"),
+        solver=pybamm.IDAKLUSolver(),
     )
     sim.build()
     end_time = timer.time()
@@ -74,38 +75,38 @@ parameter_values = pybamm.get_size_distribution_parameters(
 frequencies = np.logspace(-4, 4, 30)
 methods = ["direct", "prebicgstab"]
 models = [
-    # pybamm.lithium_ion.SPM(options={"surface form": "differential"}, name="SPM"),
-    # pybamm.lithium_ion.DFN(options={"surface form": "differential"}, name="DFN"),
-    # MPM(options={"surface form": "differential"}, name="MPM"),
-    pybamm.lithium_ion.SPM(
-        options={
-            "surface form": "differential",
-            "current collector": "potential pair",
-            "dimensionality": 2,
-        },
-        name="SPM (pouch)",
-    ),
-    pybamm.lithium_ion.DFN(
-        options={
-            "surface form": "differential",
-            "current collector": "potential pair",
-            "dimensionality": 2,
-        },
-        name="DFN (pouch)",
-    ),
-    MPM(
-        options={
-            "surface form": "differential",
-            "current collector": "potential pair",
-            "dimensionality": 2,
-        },
-        name="MPM (pouch)",
-    ),
+    pybamm.lithium_ion.SPM(options={"surface form": "differential"}, name="SPM"),
+    pybamm.lithium_ion.DFN(options={"surface form": "differential"}, name="DFN"),
+    MPM(options={"surface form": "differential"}, name="MPM"),
+    # pybamm.lithium_ion.SPM(
+    #    options={
+    #        "surface form": "differential",
+    #        "current collector": "potential pair",
+    #        "dimensionality": 2,
+    #    },
+    #    name="SPM (pouch)",
+    # ),
+    # pybamm.lithium_ion.DFN(
+    #    options={
+    #        "surface form": "differential",
+    #        "current collector": "potential pair",
+    #        "dimensionality": 2,
+    #    },
+    #    name="DFN (pouch)",
+    # ),
+    # MPM(
+    #    options={
+    #        "surface form": "differential",
+    #        "current collector": "potential pair",
+    #        "dimensionality": 2,
+    #    },
+    #    name="MPM (pouch)",
+    # ),
 ]
 for model in models:
     results = dict.fromkeys(dict.fromkeys(["brute force"] + methods))
     print(f"Solving {model.name} using brute force method")
-    # results["brute force"] = brute_force(model, parameter_values, frequencies)
+    results["brute force"] = brute_force(model, parameter_values, frequencies)
     for method in methods:
         print(f"Solving {model.name} using {method}")
         results[method] = frequency_domain(model, parameter_values, frequencies, method)
