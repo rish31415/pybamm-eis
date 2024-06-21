@@ -1,3 +1,6 @@
+> [!IMPORTANT]  
+> This repository is now maintained under the pybamm-team umbrella, and can be found [here](https://github.com/pybamm-team/pybamm-eis).
+
 # PyBaMM EIS
 PyBaMM EIS rapidly calculates the electrochemical impedance of any battery model defined using PyBaMM.
 
@@ -16,7 +19,7 @@ import pybamm
 
 model = pybamm.lithium_ion.DFN(options={"surface form": "differential"})  # DFN with capacitance
 eis_sim = pbeis.EISSimulation(model)
-eis_sim.solve(pbeis.logspace(-4, 4, 30))  # calculate impedance at log-spaced frequencies
+eis_sim.solve(pbeis.logspace(-4, 4, 30))  # calculate impedance at log-spaced frequencieshttps://github.com/pybamm-team/pybamm-eis
 eis_sim.nyquist_plot()
 ```
 
